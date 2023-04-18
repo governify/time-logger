@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Time Logger
+  description: Logs the time when a user connect to a dashboard
+
+paths:
+  /api/v1/logs:
+    get:
+      description: Returns all logs
+      operationId: getLogs
+      parameters:
+        - name: from
+          in: query
+          description: Filter logs from this date
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Filter logs to this date
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: search
+          in: query
+          description: Search for a keyword or regex
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort logs by timestamp
+          required: false
+          schema:
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
+      responses:
+        200:
+          description: Log list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/log'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      description: Creates a new log
+      operationId: addLog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/log'
+        description: Log to be created
+        required: true
+      responses:
+        201:
+          description: Log
+        default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/error'
+
+components:
+  schemas:
+    log:
+        type: object
+        required:
+          - timestamp
+        properties:
+          timestamp:
+            type: string
+          url:
+            type: string
+          id:
+            type: string
+    error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+      additionalProperties: true
