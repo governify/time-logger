@@ -1,6 +1,8 @@
 import { redisClient as client } from "../server.js";
 
 export async function addLog(req, res) {
+    if (!client.isOpen) await client.connect()
+
     const {timestamp, url, id} = res.locals.oas.body;
     client.set(timestamp, JSON.stringify({url, id})).then(() => {
         res.status(201).send();
@@ -9,7 +11,9 @@ export async function addLog(req, res) {
     });
 }
 
-export function getLogs(req, res) {
+export async function getLogs(req, res) {
+    if (!client.isOpen) await client.connect()
+
     const { from, to, sort, search } = res.locals.oas.params;
     client.keys('*').then((keys) => {
         const promises = keys

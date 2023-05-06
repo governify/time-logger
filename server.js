@@ -14,19 +14,15 @@ const deploy = async () => {
     
     const config = {}
     
-    redisClient.connect().then(() => {
-        initialize(app, config).then(() => {
-            http.createServer(app).listen(serverPort, () => {
-            console.log("\nApp running at http://localhost:" + serverPort);
+    initialize(app, config).then(() => {
+        http.createServer(app).listen(serverPort, () => {
+        console.log("\nApp running at http://localhost:" + serverPort);
+        console.log("________________________________________________________________");
+        if (!config?.middleware?.swagger?.disable) {
+            console.log('API docs (Swagger UI) available on http://localhost:' + serverPort + '/docs');
             console.log("________________________________________________________________");
-            if (!config?.middleware?.swagger?.disable) {
-                console.log('API docs (Swagger UI) available on http://localhost:' + serverPort + '/docs');
-                console.log("________________________________________________________________");
-            }
-            });
+        }
         });
-    }).catch((err) => {
-        console.log(err);
     });
 }
 
